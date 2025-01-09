@@ -1,0 +1,4 @@
+------ Criando Data
+val data = List(("Newton", 1643), ("Einstein", 1879), ("Rebeca", 1597))
+val df = data.toDF("name", "id")
+df.show()

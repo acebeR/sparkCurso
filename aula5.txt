@@ -1,0 +1,20 @@
+- Quantidade de Registros
+df.count()
+- Select
+df.show(1,truncate=False)
+df.select("Nome ...").show(truncate=False)
+- Filter
+df.filter(df["Nome"]=="MINISTERIO DA CULTURA).count().show(100,truncate=False)
+- Agrupar
+df.groupBy("Nome").count().show(truncate=False)
+df.groupBy("Nome").count().orderBy("count, ascending=False").show(truncate=False)
+- Converter dado de valor com (,)
+to_value = lambda v: float(v.replace(",","."))
+to_value("2,3")
+from pyspark.sql function as f
+udef_to_value = F.udf(to_value,pyspark.sql.types.FloatType())
+df2=df.withColumn("value",udf_to_value(df["Valor..."]))
+
+- Qual foi o Orgao que conteve mais gastos
+df2.groupBy("Nome").sum("value".show)
+df2.describe("value").show()

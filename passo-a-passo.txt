@@ -1,0 +1,9 @@
+------ docker
+1 - docker pull bitnami/spark
+2 - docker run -d --name spark bitnami/spark
+
+------ Spark
+Entre no container do Spark com o comando:
+1-docker exec -it spark bash
+2-spark-shell
+3-docker stop spark

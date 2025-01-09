@@ -1,0 +1,14 @@
+---- Pegando dados do Portal da Transparencia
+docker run -v C:/Users/stefanini/Downloads:/mnt/downloads -it bitnami/spark bash
+roda o spark
+iconv -f Windows-1252 -t utf-8 /opt/bitnami/spark/2024_Viagem.csv -o /opt/bitnami/spark/2024_Viagem_utf8.csv
+
+val filePath = "/opt/bitnami/spark/2024_Viagem_utf8.csv"
+val df = spark.read.option("header", "true").csv(filePath)
+df.show()
+
+val df = spark.read.format("csv")  
+  .option("header", "true")
+  .option("delimiter", "\t")       
+  .option("inferSchema", "true")
+  .load("/opt/bitnami/spark/2024_Viagem_utf8.csv")

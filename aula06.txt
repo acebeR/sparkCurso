@@ -1,0 +1,57 @@
+------ Passos ----
+1 - Baixei do Portal da Transparencia : https://portaldatransparencia.gov.br/download-de-dados/emendas-parlamentares
+2 - Jogar arquivo no docker:
+exit
+docker ps
+docker cp C:/Users/stefanini/Documents/git/sparkCurso/Emenda.csv f288766f6ea5:/opt/bitnami/spark/Emenda.csv
+docker exec -it f288766f6ea5 bash
+ls /opt/bitnami/spark
+
+3 - Transferir para o spark:
+val df = spark.read.option("header", "true").option("inferSchema", "true").csv("/opt/bitnami/spark/Emenda.csv")
+df.show()
+
+import org.apache.spark.sql.SparkSession
+
+// Criando uma sessão do Spark
+val spark = SparkSession.builder.appName("ExemploCSV").master("local").getOrCreate()
+
+// Carregando o arquivo CSV para o DataFrame 'df'
+val df = spark.read.option("header", "true").option("inferSchema", "true").csv("/opt/bitnami/spark/Emendas.csv")
+
+// Exibindo as primeiras linhas do DataFrame
+df.show()
+
+// Exibindo o esquema do DataFrame
+df.printSchema()
+
+4 - 
+
+// Importando as funções necessárias
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types._
+
+// Criando a função equivalente à "to_value" em Scala
+val toValue = (v: String) => v.replace(",", ".").toFloat
+
+// Registrando a função como uma UDF no Spark
+val udfToValue = udf(toValue) 
+// Remover espaços extras e caracteres não visíveis
+val cleanColumns = df.columns.map(_.trim.replaceAll("[^\\x00-\\x7F]", ""))
+
+// Renomear todas as colunas para nomes "limpos"
+val dfClean = df.toDF(cleanColumns: _*)
+
+// Supondo que df seja o DataFrame, aplicando as transformações
+val dfRenamed = df.withColumnRenamed("C?digo da Emenda", "Codigo_Emenda")
+val dfRenamed = df.withColumnRenamed("Valor_Pago", "Valor Pago")
+val df2 = df.withColumn("Valor Pago", udfToValue(col("Valor_Pago")))
+
+// Exibindo o esquema do DataFrame
+df.printSchema()
+
+// Exibindo as primeiras linhas do DataFrame
+df.show()
+
+5 - Query
+val df2 = df.select(col("Nome_Funcao"), col("Valor_Pago"))
